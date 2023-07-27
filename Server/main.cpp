@@ -6,6 +6,10 @@
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
 #include <thrift/transport/TBufferTransports.h>
+#include <thread>
+#include <vector>
+
+std::vector<std::string> users;
 
 using namespace ::apache::thrift;
 using namespace ::apache::thrift::protocol;
@@ -21,13 +25,16 @@ class chatServerHandler : virtual public chatServerIf {
   }
 
   bool findUser(const std::string& username) {
-    // Your implementation goes here
-    printf("findUser\n");
+    for(auto i : users){
+      if(i == username) return true;
+    }
+    return false;
   }
 
   bool addUser(const std::string& username) {
-    // Your implementation goes here
-    printf("addUser\n");
+    if(findUser(username)) return false;
+    users.push_back(username);
+    return true;
   }
 
   bool createRoom(const std::string& roomname) {
@@ -42,7 +49,9 @@ class chatServerHandler : virtual public chatServerIf {
 
 };
 
-int main(int argc, char **argv) {
+
+
+int thriftThread(){
   int port = 9090;
   ::std::shared_ptr<chatServerHandler> handler(new chatServerHandler());
   ::std::shared_ptr<TProcessor> processor(new chatServerProcessor(handler));
@@ -53,5 +62,9 @@ int main(int argc, char **argv) {
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
   server.serve();
   return 0;
+}
+
+int main(int argc, char **argv) {
+
 }
 

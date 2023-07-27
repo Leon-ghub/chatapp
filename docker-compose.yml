@@ -1,0 +1,22 @@
+version: '0.1'
+
+services:
+  app1:
+    image: your_app_image1:latest
+    networks:
+      static_network:
+        ipv4_address: 172.18.0.10   # Hier die gewünschte statische IP-Adresse eintragen
+
+  app2:
+    image: your_app_image2:latest
+    networks:
+      static_network:
+        ipv4_address: 172.18.0.11   # Hier die gewünschte statische IP-Adresse eintragen
+
+networks:
+  static_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16    # Passen Sie das Subnetz nach Bedarf an
